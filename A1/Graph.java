@@ -9,10 +9,13 @@ public class Graph
 	private Vertex root;
 	private float[][] adjMatrix;
 
+	public Graph(){
+
+	}
+
 	public Graph(Vertex n){
 		this.root = n;
 	}
-
 	//connects the two vertex
 	public void connect(Vertex a, Vertex b){
 
