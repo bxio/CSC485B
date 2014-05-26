@@ -21,22 +21,28 @@ public class diameter{
 			int row = size-1;
 			int col = size-1;
 
-			for(int i = 0; i < row; i++)
-			{
+			for(int i = 0; i < row; i++){
 				line = sc.nextLine();
 				String[] nodes = line.split(";");
 
-				for(int j = 0; j < col; j++)
-				{
+				for(int j = 0; j < col; j++){
 					adj_list[i][j] = Float.parseFloat(nodes[j+1]);
-					if(adj_list[i][j] == 0)
+
+					if(adj_list[i][j] == 0){
 						adj_list[i][j] = Float.POSITIVE_INFINITY;
+					}
 				}
 			}
+			sc.close();
 		}catch (FileNotFoundException e){
 			System.out.println("file io error");
 		}
-		sc.close();
+
+	}
+
+	public static int findSize(String firstLine){
+		String[] nodes = firstLine.split(";");
+		return nodes.length;
 	}
 
 	//Runs the Floyd Warshall algorithm on the given adjacency list
@@ -50,9 +56,23 @@ public class diameter{
 		}
 	}
 
-	public static int findSize(String firstLine){
-		String[] nodes = firstLine.split(";");
-		return nodes.length;
+	public static int getDiameter(float[][] adj_list, int size){
+		//copy the adj matrix
+		float[][] copyOfAdjMatrix = adj_list.clone();
+		//run the floyd-warshall algorithm
+		floydWarshall(copyOfAdjMatrix, size);
+
+		float diameter = 0;
+		for(int i = 0; i < size; i++){
+			for(int j = 0; j < size; j++){
+				if(adj_list[i][j] != Float.POSITIVE_INFINITY){
+					if (diameter < adj_list[i][j]){
+						diameter = adj_list[i][j];
+					}
+				}
+			}
+		}
+		return (int)diameter;
 	}
 
 	public static void main (String[] args){
@@ -74,11 +94,12 @@ public class diameter{
 			float[][] adj_matrix = new float[size][size];
 			//populate the adj matrix
 			parseFile(filename, adj_matrix, size);
+			//grab the diameter
+			int diameter = getDiameter(adj_matrix, size-1);
+			System.out.println("Diameter of the graph is:"+diameter);
 
 		}catch(FileNotFoundException e){
 			System.out.println("File not found error.");
 		}
-
 	}
-
 }
