@@ -1,9 +1,4 @@
-/*********************
-** Bill Xiong       **
-** V00737042        **
-** CSc 485B         **
-** Summer 2014      **
-*********************/
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;

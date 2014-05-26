@@ -4,7 +4,7 @@ build:
 	javac *.java
 
 run: build
-	java q3
+	java diameter
 
 clean:
 	rm -rf *.class
