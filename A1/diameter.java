@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class diameter{
-
 	/**
 	 * Parses the csv file into a weighted adjacency matrix.
 	 *
@@ -40,7 +39,7 @@ public class diameter{
 					}
 				}
 			}
-			sc.close();
+			sc.close();//close the scanner
 		}catch (FileNotFoundException e){
 			System.out.println("file io error");
 		}
@@ -114,14 +113,14 @@ public class diameter{
 			//System.out.println("First line:"+line);
 			//file exists, let's find out size of the adj matrix.
 			int size = findSize(line);
-			System.out.println("Size is:"+size);
+			System.out.print("Size of graph is:"+size+" ");
 			//Create the adj matrix
 			float[][] adj_matrix = new float[size][size];
 			//populate the adj matrix
 			parseFile(filename, adj_matrix, size);
 			//grab the diameter
 			int diameter = getDiameter(adj_matrix, size-1);
-			System.out.println("Diameter of the graph is:"+diameter);
+			System.out.println("Diameter is:"+diameter);
 
 		}catch(FileNotFoundException e){
 			System.out.println("File not found error.");
