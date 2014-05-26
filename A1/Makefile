@@ -6,5 +6,7 @@ build:
 run: build
 	java diameter
 
+experiment: clean build
+	java diameter < "graph.csv"
 clean:
 	rm -rf *.class
