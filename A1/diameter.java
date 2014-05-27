@@ -99,31 +99,48 @@ public class diameter{
 		return (int)diameter;
 	}
 
+	/**
+	 * Finds the number of isolated nodes in the graph.
+	 *
+	 * @param  adj_matrix  the adjacency matrix representing the graph
+	 * @return      the number of nodes in the graph without any incoming or outgoing edges.
+	 */
+	public static int getNumberOfIsolatedNodes(float[][] adj_matrix, int size){
+
+		return 0;
+	}
+
 	public static void main (String[] args){
-		Scanner sc = new Scanner(System.in);
-		System.out.print("Enter filename:");
-		String filename = sc.nextLine();
-		sc.close();
+		if(args.length == 0){
+			System.out.println("Usage: java diameter location_of_file.csv");
+		}else{
+			String filename = args[0];
+			System.out.println("Given file is:"+filename);
+			try{
+				File file = new File(filename);
+				Scanner sc = new Scanner(file);
+				String line = sc.nextLine();
+				//System.out.println("First line:"+line);
+				//file exists, let's find out size of the adj matrix.
+				int size = findSize(line);
+				System.out.print("Size of graph is:"+size+" ");
+				//Create the adj matrix
+				float[][] adj_matrix = new float[size][size];
+				//populate the adj matrix
+				parseFile(filename, adj_matrix, size);
+				//grab the diameter
+				int diameter = getDiameter(adj_matrix, size-1);
+				System.out.println("Diameter is:"+diameter);
+				//find and printout number of empty nodes if specified.
 
-		System.out.println(filename);
-		try{
-			File file = new File(filename);
-			sc = new Scanner(file);
-			String line = sc.nextLine();
-			//System.out.println("First line:"+line);
-			//file exists, let's find out size of the adj matrix.
-			int size = findSize(line);
-			System.out.print("Size of graph is:"+size+" ");
-			//Create the adj matrix
-			float[][] adj_matrix = new float[size][size];
-			//populate the adj matrix
-			parseFile(filename, adj_matrix, size);
-			//grab the diameter
-			int diameter = getDiameter(adj_matrix, size-1);
-			System.out.println("Diameter is:"+diameter);
+				int isolated = getNumberOfIsolatedNodes(adj_matrix, size);
+				System.out.println("Number of isolated nodes:"+isolated);
 
-		}catch(FileNotFoundException e){
-			System.out.println("File not found error.");
+			}catch(FileNotFoundException e){
+				System.out.println("File not found error.");
+			}
 		}
+
+
 	}
 }
