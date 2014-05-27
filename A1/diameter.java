@@ -106,8 +106,20 @@ public class diameter{
 	 * @return      the number of nodes in the graph without any incoming or outgoing edges.
 	 */
 	public static int getNumberOfIsolatedNodes(float[][] adj_matrix, int size){
-
-		return 0;
+		int count = 0;
+		Boolean foreverAlone = true; //everyone starts out alone, right?
+		for(int i=0;i<size;i++){
+			for(int j=0;j<size;j++){
+				if(adj_matrix[i][j] != 0){ //if I have an edge to someone else, I'm obviously not alone
+					foreverAlone = false;
+				}
+			}
+			if(foreverAlone){
+				count++;
+			}
+			foreverAlone = true; //reset the flag for the next person.
+		}
+		return count;
 	}
 
 	public static void main (String[] args){
@@ -115,7 +127,7 @@ public class diameter{
 			System.out.println("Usage: java diameter location_of_file.csv");
 		}else{
 			String filename = args[0];
-			System.out.println("Given file is:"+filename);
+			System.out.println("Now analyzing: "+filename);
 			try{
 				File file = new File(filename);
 				Scanner sc = new Scanner(file);
@@ -123,18 +135,18 @@ public class diameter{
 				//System.out.println("First line:"+line);
 				//file exists, let's find out size of the adj matrix.
 				int size = findSize(line);
-				System.out.print("Size of graph is:"+size+" ");
+				System.out.print("Size of graph is: "+size+" ");
 				//Create the adj matrix
 				float[][] adj_matrix = new float[size][size];
 				//populate the adj matrix
 				parseFile(filename, adj_matrix, size);
 				//grab the diameter
 				int diameter = getDiameter(adj_matrix, size-1);
-				System.out.println("Diameter is:"+diameter);
+				System.out.println("Diameter is: "+diameter);
 				//find and printout number of empty nodes if specified.
 
 				int isolated = getNumberOfIsolatedNodes(adj_matrix, size);
-				System.out.println("Number of isolated nodes:"+isolated);
+				System.out.println("Number of isolated nodes: "+isolated);
 
 			}catch(FileNotFoundException e){
 				System.out.println("File not found error.");
