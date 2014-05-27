@@ -106,20 +106,24 @@ public class diameter{
 	 * @return      the number of nodes in the graph without any incoming or outgoing edges.
 	 */
 	public static int getNumberOfIsolatedNodes(float[][] adj_matrix, int size){
+		size -= 1; //normalize the size
 		int count = 0;
-		Boolean foreverAlone = true; //everyone starts out alone, right?
-		for(int i=0;i<size;i++){
-			for(int j=0;j<size;j++){
-				if(adj_matrix[i][j] != 0){ //if I have an edge to someone else, I'm obviously not alone
-					foreverAlone = false;
+		Boolean foreverAlone = false;
+
+		for(int i = 0; i < size; i++){
+			for(int j = 0; j < size; j++){
+				if(adj_matrix[i][j] == 1){
+					foreverAlone = true;
 				}
 			}
-			if(foreverAlone){
+			if (!foreverAlone){
 				count++;
 			}
-			foreverAlone = true; //reset the flag for the next person.
 		}
+
+
 		return count;
+
 	}
 
 	public static void main (String[] args){
