@@ -89,9 +89,9 @@ public class diameter{
 		float diameter = 0;
 		for(int i = 0; i < size; i++){
 			for(int j = 0; j < size; j++){
-				if(adj_matrix[i][j] != Float.POSITIVE_INFINITY){
-					if (diameter < adj_matrix[i][j]){
-						diameter = adj_matrix[i][j];
+				if(copyOfAdjMatrix[i][j] != Float.POSITIVE_INFINITY){
+					if (diameter < copyOfAdjMatrix[i][j]){
+						diameter = copyOfAdjMatrix[i][j];
 					}
 				}
 			}
@@ -108,20 +108,18 @@ public class diameter{
 	public static int getNumberOfIsolatedNodes(float[][] adj_matrix, int size){
 		size -= 1; //normalize the size
 		int count = 0;
-		Boolean foreverAlone = false;
+		Boolean foreverAlone = true;
 
 		for(int i = 0; i < size; i++){
 			for(int j = 0; j < size; j++){
 				if(adj_matrix[i][j] == 1){
-					foreverAlone = true;
+					foreverAlone = false;
 				}
 			}
-			if (!foreverAlone){
+			if (foreverAlone){
 				count++;
 			}
 		}
-
-
 		return count;
 
 	}
