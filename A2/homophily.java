@@ -73,7 +73,7 @@ public class homophily{
 
 			for(int i=0;i<size;i++){
 				Node tmp = new Node();
-				System.out.println(line);
+				//System.out.println(line);
 				parts = line.split(",");
 				tmp.setID(parts[0]);
 				tmp.setLabel(parts[1]);
@@ -84,7 +84,7 @@ public class homophily{
 						tmp.setGender(1);
 					}
 				}catch(ArrayIndexOutOfBoundsException e){
-					System.out.println("Node gender not set!");
+					//System.out.println("Node gender not set!");
 					tmp.setGender(-1);
 				}
 				gender_matrix[i]=tmp;
