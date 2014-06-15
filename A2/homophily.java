@@ -70,14 +70,13 @@ public class homophily{
 			String line = sc.nextLine();
 
 			String[] parts;
-			Node tmp = new Node();
 
 			for(int i=0;i<size;i++){
+				Node tmp = new Node();
 				System.out.println(line);
 				parts = line.split(",");
 				tmp.setID(parts[0]);
 				tmp.setLabel(parts[1]);
-
 				try{
 					if(parts[2].equals("male")){
 						tmp.setGender(0);
@@ -121,7 +120,22 @@ public class homophily{
 				//populate the adj matrix
 				parseFile(csvOfGraph, adj_matrix, size);
 				parseFileForGender(csvOfGender, node_matrix,size);
-				//grab the diameter
+
+				//System.out.println("Size of node matrix is:"+node_matrix.length);
+
+				//Calculate expected cross-edge percentage
+				float numMale = 0;
+				float numFemale = 0;
+				for(int i=0;i<node_matrix.length;i++){
+					if(node_matrix[i].getGender() == 0){
+						numMale++;
+					}else if(node_matrix[i].getGender() == 1){
+						numFemale++;
+					}
+				}
+				System.out.println("Males:"+numMale+ " Females:"+numFemale+" out of a total "+(numMale+numFemale));
+				System.out.println("Expected Cross-edge percentage:"+(2 * (numMale/(numMale+numFemale)) * (numFemale/(numMale+numFemale)) ) );
+
 			}catch(FileNotFoundException e){
 				System.out.println("File not found error.");
 			}
