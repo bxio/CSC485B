@@ -99,6 +99,14 @@ public class homophily{
 		}
 	}
 
+	/**
+	 * Traverses the given Adjacency matrix and returns the cross-edge percentage.
+	 *
+	 * @param  adj_matrix  the adjacency matrix to be traversed
+	 * @param  nodeMatrix  the matrix of nodes containing the gender information
+	 * @param  size  the size of the adjacency matrix for the graph in question
+	 * @return      the float describing the percentage of cross-edges in the graph, out of 1.
+	 */
 	public static float getActualCrossEdgePercentage(float[][] adj_matrix, Node[] nodeMatrix, int size){
 		//copy the adj matrix
 		float[][]adj_copy = new float[size][size];
