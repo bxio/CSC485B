@@ -99,6 +99,33 @@ public class homophily{
 		}
 	}
 
+	public static float getActualCrossEdgePercentage(float[][] adj_matrix, Node[] nodeMatrix, int size){
+		//copy the adj matrix
+		float[][]adj_copy = new float[size][size];
+
+		for (int i = 0; i < adj_matrix.length; i++){
+			System.arraycopy(adj_matrix[i], 0, adj_copy[i], 0, adj_matrix[0].length);
+		}
+		float numCrossEdges = 0;
+		float numTotalEdges = 0;
+		//interate through, find cross-edges
+		for(int i=0;i<adj_copy.length;i++){
+			for(int j=0;j<adj_copy[i].length;j++){
+				if(adj_copy[i][j] == 1){
+					numTotalEdges++;
+					//found an edge, check for cross-edge property
+					if((nodeMatrix[i].getGender() != nodeMatrix[j].getGender()) && (nodeMatrix[i].getGender() != -1)){
+						numCrossEdges++;
+					}
+					//delete the corresponding edge.
+					adj_copy[j][i] = 0;
+				}
+			}
+		}
+		System.out.println("Actual number of cross-edges:"+numCrossEdges+" out of "+numTotalEdges);
+		return (numCrossEdges/numTotalEdges);
+	}
+
 	public static void main (String[] args){
 		if(args.length == 0){
 			System.out.println("Usage: java diameter location_of_file.csv location_of_gender_file.csv");
@@ -134,7 +161,9 @@ public class homophily{
 					}
 				}
 				System.out.println("Males:"+numMale+ " Females:"+numFemale+" out of a total "+(numMale+numFemale));
-				System.out.println("Expected Cross-edge percentage:"+(2 * (numMale/(numMale+numFemale)) * (numFemale/(numMale+numFemale)) ) );
+				System.out.println("Expected Cross-Edge Percentage:"+(2 * (numMale/(numMale+numFemale)) * (numFemale/(numMale+numFemale)) ) );
+				//Traverse the Adj matrix, find actual Cross-edge percentage.
+				System.out.println("Actual Cross-Edge Percentage:"+getActualCrossEdgePercentage(adj_matrix,node_matrix,size));
 
 			}catch(FileNotFoundException e){
 				System.out.println("File not found error.");
