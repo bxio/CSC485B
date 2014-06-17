@@ -120,13 +120,17 @@ public class homophily{
 		for(int i=0;i<adj_copy.length;i++){
 			for(int j=0;j<adj_copy[i].length;j++){
 				if(adj_copy[i][j] == 1){
-					numTotalEdges++;
+          if(nodeMatrix[i].getGender() != -1 && nodeMatrix[j].getGender() != -1){
+            //only include edge if it doesn't contain genderless peers.
+            numTotalEdges++;
+          }
+
 					//found an edge, check for cross-edge property
 					if((nodeMatrix[i].getGender() != nodeMatrix[j].getGender()) && (nodeMatrix[i].getGender() != -1)){
 						numCrossEdges++;
 					}
 					//delete the corresponding edge.
-					adj_copy[j][i] = 0;
+					//adj_copy[j][i] = 0;
 				}
 			}
 		}
