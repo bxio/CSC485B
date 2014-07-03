@@ -63,12 +63,13 @@ public class A3{
     //TODO: Find minimal case.
   }
 
-  public static void printAdoptionStatus(boolean[] adopt_matrix){
+  public static void printStatus(boolean[] adopt_matrix){
+    System.out.print("[");
     for(int i=0;i<adopt_matrix.length;i++){
       System.out.print(adopt_matrix[i]+",");
     }
 
-    System.out.print("\n");
+    System.out.println("]");
   }
 
   public static boolean determineMyAdoptionStatus(float[][] adj_matrix, boolean[] adopt_matrix, float qValue, int poi){
@@ -86,15 +87,58 @@ public class A3{
       }
     }
     //calculate the p-value
-    System.out.println("CA:"+numConnectedAdopters+" CNA: "+numConnectedNonAdopters);
+    System.out.print("Node "+poi+" CA:"+numConnectedAdopters+" CNA: "+numConnectedNonAdopters);
     pValue = ((float)numConnectedAdopters/((float)(numConnectedAdopters+numConnectedNonAdopters)));
-    System.out.println("p:"+pValue+" q:"+qValue);
+    System.out.print("p:"+pValue+" q:"+qValue+"=");
 
-    if((pValue)>=qValue){
+    if((pValue>=qValue) || adopt_matrix[poi]){
+      System.out.println("True.");
       return true;
     }else{
+      System.out.println("False.");
       return false;
     }
+  }
+
+  public static void determineAndAdopt(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
+    //initially determine previous converted count
+    boolean[] nextAdoptMatrix = new boolean[adopt_matrix.length];
+    System.arraycopy(adopt_matrix, 0, nextAdoptMatrix, 0, adopt_matrix.length);
+
+    int previousConvertedCount = 0;
+    for(int i=0;i<adopt_matrix.length;i++){
+      if(adopt_matrix[i]){
+        previousConvertedCount++;
+      }
+    }
+    //printStatus(nextAdoptMatrix);
+
+    boolean[] eligableStatus = new boolean[adopt_matrix.length];
+    Arrays.fill(eligableStatus, false);
+
+    //start loop
+    for(int i=0;i<adj_matrix.length;i++){
+      for(int j=0;j<adj_matrix[i].length;j++){
+        //traverse the array
+        if(adj_matrix[i][j] == 1 && adopt_matrix[i] && !adopt_matrix[j] && !eligableStatus[j]){
+          System.out.println("Node "+j+" eligable.");
+          eligableStatus[j] = true;
+        }
+      }
+    }
+    printStatus(eligableStatus);
+
+    //convert the ones that are potentially eligable
+    for(int i=0;i<eligableStatus.length;i++){
+      if(eligableStatus[i] && determineMyAdoptionStatus(adj_matrix,adopt_matrix,qValue,i)){
+        System.out.println("Adopted Node "+i);
+        adopt_matrix[i] = true;
+      }
+    }
+    //reset.
+    Arrays.fill(eligableStatus, false);
+    //end loop
+
   }
 
   public static void main (String[] args){
@@ -118,10 +162,10 @@ public class A3{
         parseFile(csvOfGraph, adj_matrix, size);
         makeRandomFirstAdopters(2,adopt_matrix);
 
-        printAdoptionStatus(adopt_matrix);
+        printStatus(adopt_matrix);
 
-        System.out.println(determineMyAdoptionStatus(adj_matrix, adopt_matrix, qValue, 2));
-
+        //System.out.println(determineMyAdoptionStatus(adj_matrix, adopt_matrix, qValue, 2));
+        determineAndAdopt(adj_matrix, adopt_matrix, qValue);
       }catch(FileNotFoundException e){
         System.out.println("File not found error.");
       }
