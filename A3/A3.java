@@ -56,19 +56,45 @@ public class A3{
     }
   }
 
-  public static void makeRandomFirstAdopters(int numToAdopt, boolean[] status_matrix){
+  public static void makeRandomFirstAdopters(int numToAdopt, boolean[] adopt_matrix){
     for(int i=0;i<numToAdopt;i++){
-      status_matrix[i] = true;
+      adopt_matrix[i] = true;
     }
     //TODO: Find minimal case.
   }
 
-  public static void printAdoptionStatus(boolean[] status_matrix){
-    for(int i=0;i<status_matrix.length;i++){
-      System.out.print(status_matrix[i]+",");
+  public static void printAdoptionStatus(boolean[] adopt_matrix){
+    for(int i=0;i<adopt_matrix.length;i++){
+      System.out.print(adopt_matrix[i]+",");
     }
 
     System.out.print("\n");
+  }
+
+  public static boolean determineMyAdoptionStatus(float[][] adj_matrix, boolean[] adopt_matrix, float qValue, int poi){
+    float pValue;
+    int numConnectedAdopters = 0;
+    int numConnectedNonAdopters = 0;
+    //traverse the matrix
+    for(int i=0;i<adj_matrix[poi].length;i++){
+      if(adj_matrix[poi][i]==1){
+        if(adopt_matrix[i]){
+          numConnectedAdopters++;
+        }else{
+          numConnectedNonAdopters++;
+        }
+      }
+    }
+    //calculate the p-value
+    System.out.println("CA:"+numConnectedAdopters+" CNA: "+numConnectedNonAdopters);
+    pValue = ((float)numConnectedAdopters/((float)(numConnectedAdopters+numConnectedNonAdopters)));
+    System.out.println("p:"+pValue+" q:"+qValue);
+
+    if((pValue)>=qValue){
+      return true;
+    }else{
+      return false;
+    }
   }
 
   public static void main (String[] args){
@@ -87,12 +113,14 @@ public class A3{
         System.out.print("Size of graph is: "+size+"\n");
         //Create the adj matrix
         float[][] adj_matrix = new float[size][size];
-        boolean[] status_matrix = new boolean[size];
+        boolean[] adopt_matrix = new boolean[size];
         //populate the adj matrix
         parseFile(csvOfGraph, adj_matrix, size);
-        makeRandomFirstAdopters(2,status_matrix);
+        makeRandomFirstAdopters(2,adopt_matrix);
 
-        printAdoptionStatus(status_matrix);
+        printAdoptionStatus(adopt_matrix);
+
+        System.out.println(determineMyAdoptionStatus(adj_matrix, adopt_matrix, qValue, 2));
 
       }catch(FileNotFoundException e){
         System.out.println("File not found error.");
