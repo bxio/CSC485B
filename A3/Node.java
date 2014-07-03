@@ -19,7 +19,7 @@ public class Node{
     return this.state;
   }
 
-  public boolean setState(boolean newState){
+  public void setState(boolean newState){
     this.state = newState;
   }
 
@@ -39,8 +39,16 @@ public class Node{
     this.id = id;
   }
 
+  public String getStateInWords(){
+    if(this.state){
+      return "A";
+    }else{
+      return "B";
+    }
+  }
+
   public String toString(){
-    return (this.id+" "+this.label+" "+this.getGenderInWords());
+    return (this.id+" "+this.label+" "+this.getStateInWords());
   }
 
 }
