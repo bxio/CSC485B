@@ -10,6 +10,9 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class A3{
+
+  public static final boolean PRINT_DEBUG = false;
+
   /**
    * Returns the size of the adjacency matrix to be generated from parsing
    * the .csv file.
@@ -81,7 +84,7 @@ public class A3{
     System.out.println("]");
   }
 
-  public static void determineAndAdopt(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
+  public static boolean determineAndAdopt(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
     //initially determine previous converted count
     boolean[] nextAdoptMatrix = new boolean[adopt_matrix.length];
     System.arraycopy(adopt_matrix, 0, nextAdoptMatrix, 0, adopt_matrix.length);
@@ -92,55 +95,66 @@ public class A3{
         previousConvertedCount++;
       }
     }
-    //printStatus(nextAdoptMatrix);
 
     //start loop
     adoptNeighbours(adj_matrix, adopt_matrix, qValue);
 
+    if(getTotalConverts(adopt_matrix) == adopt_matrix.length){
+      return true;
+    }else{
+      //keep testing with a different set of initial vectors
+      return false;
+    }
+    // return false;
   }
 
   public static void adoptNeighbours(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
     boolean[] eligibleStatus = new boolean[adopt_matrix.length];
     Arrays.fill(eligibleStatus, false);
-
-    System.out.print("Initial: ");
-    printStatus(adopt_matrix);
+    if(PRINT_DEBUG){
+      System.out.print("Initial: ");
+      printStatus(adopt_matrix);
+    }
 
     for(int i=0;i<adj_matrix.length;i++){
-      System.out.print("Start "+i+": ");
-      printStatus(adopt_matrix);
+      if(PRINT_DEBUG){
+        System.out.print("Start "+i+": ");
+        printStatus(adopt_matrix);
+      }
       for(int j=0;j<adj_matrix[i].length;j++){
         //traverse the array
         if(adj_matrix[i][j] == 1 && adopt_matrix[i] && !adopt_matrix[j] && !eligibleStatus[j]){
           //I'm converted, my neighbour is not, and isn't already on the list to check
-          System.out.println("Node "+j+" potentially eligible.");
+          if(PRINT_DEBUG){
+            System.out.println("Node "+j+" potentially eligible.");
+          }
           eligibleStatus[j] = true;
         }
-      }
-      System.out.print("Eligibles: ");
-      printStatus(eligibleStatus);
-      if(getEligibleCount(eligibleStatus) == 0){
-        break;
       }
 
       //convert the ones that are potentially eligible
       for(int k=0;k<eligibleStatus.length;k++){
         if(eligibleStatus[k] && determineAdoptionStatus(adj_matrix,adopt_matrix,qValue,k)){
-          System.out.println("Adopted Node "+k);
+          if(PRINT_DEBUG){
+            System.out.println("Adopted Node "+k);
+          }
           adopt_matrix[k] = true;
         }
       }
-      System.out.print("Finish "+i+": ");
-      printStatus(adopt_matrix);
+      if(PRINT_DEBUG){
+        System.out.print("Finish "+i+": ");
+        printStatus(adopt_matrix);
+      }
+
       Arrays.fill(eligibleStatus, false);
     }
 
-    System.out.print("Finish: ");
-    printStatus(adopt_matrix);
+    // System.out.print("Finish: ");
+    // printStatus(adopt_matrix);
   }
 
 
-  public static int getEligibleCount(boolean[] adopt_matrix){
+  public static int getTotalConverts(boolean[] adopt_matrix){
     int count = 0;
     for(int i=0;i<adopt_matrix.length;i++){
       if(adopt_matrix[i]){
@@ -149,6 +163,7 @@ public class A3{
     }
     return count;
   }
+
   public static boolean determineAdoptionStatus(float[][] adj_matrix, boolean[] adopt_matrix, float qValue, int poi){
     float pValue;
     int numConnectedAdopters = 0;
@@ -164,22 +179,30 @@ public class A3{
       }
     }
     //calculate the p-value
-    System.out.print("Node "+poi+": "+numConnectedAdopters+" CA "+numConnectedNonAdopters+" CNA ");
+    if(PRINT_DEBUG){
+      System.out.print("Node "+poi+": "+numConnectedAdopters+" CA "+numConnectedNonAdopters+" CNA ");
+    }
     pValue = ((float)numConnectedAdopters/((float)(numConnectedAdopters+numConnectedNonAdopters)));
-    System.out.print("p:"+pValue+" q:"+qValue+"=");
+    if(PRINT_DEBUG){
+      System.out.print("p:"+pValue+" q:"+qValue+"=");
+    }
 
     if((pValue>=qValue) || adopt_matrix[poi]){
-      System.out.println("True.");
+      if(PRINT_DEBUG){
+        System.out.println("True.");
+      }
       return true;
     }else{
-      System.out.println("False.");
+      if(PRINT_DEBUG){
+        System.out.println("False.");
+      }
       return false;
     }
   }
 
   public static void main(String [] args){
     if(args.length == 0){
-        System.out.println("Usage: java A3 location_of_file.csv <q value>");
+        System.out.println("Usage: java A3 location_of_file.csv <initial_adopters> <q value>");
     }else{
       String csvOfGraph = args[0];
       int numAdopters = Integer.parseInt(args[1]);
@@ -196,11 +219,15 @@ public class A3{
         boolean[] adopt_matrix = new boolean[size];
         //populate the adj matrix
         parseFileIntoAdjMatrix(csvOfGraph, adj_matrix, size);
-        //printMatrix(adj_matrix);
-        makeRandomFirstAdopters(3, adopt_matrix);
+        numAdopters = 4;//HARDCODE
+        makeRandomFirstAdopters(numAdopters, adopt_matrix);
         //printStatus(adopt_matrix);
 
-        determineAndAdopt(adj_matrix, adopt_matrix, qValue);
+        if(determineAndAdopt(adj_matrix, adopt_matrix, qValue)){
+          System.out.println("Complete cascade with "+numAdopters+ " initial adoptors found.");
+        }else{
+          System.out.println("Complete cascade with "+numAdopters+ " initial adoptors is not possible.");
+        }
 
       }catch(FileNotFoundException e){
         System.out.println("File not found error.");
