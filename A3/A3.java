@@ -103,10 +103,12 @@ public class A3{
     boolean[] eligibleStatus = new boolean[adopt_matrix.length];
     Arrays.fill(eligibleStatus, false);
 
-    System.out.print("Start: ");
+    System.out.print("Initial: ");
     printStatus(adopt_matrix);
 
     for(int i=0;i<adj_matrix.length;i++){
+      System.out.print("Start "+i+": ");
+      printStatus(adopt_matrix);
       for(int j=0;j<adj_matrix[i].length;j++){
         //traverse the array
         if(adj_matrix[i][j] == 1 && adopt_matrix[i] && !adopt_matrix[j] && !eligibleStatus[j]){
@@ -128,9 +130,10 @@ public class A3{
           adopt_matrix[k] = true;
         }
       }
+      System.out.print("Finish "+i+": ");
+      printStatus(adopt_matrix);
       Arrays.fill(eligibleStatus, false);
     }
-
 
     System.out.print("Finish: ");
     printStatus(adopt_matrix);
@@ -194,8 +197,8 @@ public class A3{
         //populate the adj matrix
         parseFileIntoAdjMatrix(csvOfGraph, adj_matrix, size);
         //printMatrix(adj_matrix);
-        makeRandomFirstAdopters(2,adopt_matrix);
-        printStatus(adopt_matrix);
+        makeRandomFirstAdopters(3, adopt_matrix);
+        //printStatus(adopt_matrix);
 
         determineAndAdopt(adj_matrix, adopt_matrix, qValue);
 
