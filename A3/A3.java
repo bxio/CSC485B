@@ -65,6 +65,50 @@ public class A3{
     }
   }
 
+  public static void makeRandomFirstAdopters(int numToAdopt, boolean[] adopt_matrix){
+      for(int i=0;i<numToAdopt;i++){
+        adopt_matrix[i] = true;
+      }
+      //TODO: Find minimal case.
+    }
+
+  public static void printStatus(boolean[] adopt_matrix){
+    System.out.print("[");
+    for(int i=0;i<adopt_matrix.length;i++){
+      System.out.print(adopt_matrix[i]+",");
+    }
+
+    System.out.println("]");
+  }
+
+  public static boolean determineAdoptionStatus(float[][] adj_matrix, boolean[] adopt_matrix, float qValue, int poi){
+    float pValue;
+    int numConnectedAdopters = 0;
+    int numConnectedNonAdopters = 0;
+    //traverse the matrix
+    for(int i=0;i<adj_matrix[poi].length;i++){
+      if(adj_matrix[poi][i]==1){
+        if(adopt_matrix[i]){
+          numConnectedAdopters++;
+        }else{
+          numConnectedNonAdopters++;
+        }
+      }
+    }
+    //calculate the p-value
+    System.out.print("Node "+poi+": "+numConnectedAdopters+" CA "+numConnectedNonAdopters+" CNA ");
+    pValue = ((float)numConnectedAdopters/((float)(numConnectedAdopters+numConnectedNonAdopters)));
+    System.out.print("p:"+pValue+" q:"+qValue+"=");
+
+    if((pValue>=qValue) || adopt_matrix[poi]){
+      System.out.println("True.");
+      return true;
+    }else{
+      System.out.println("False.");
+      return false;
+    }
+  }
+
   public static void main(String [] args){
     if(args.length == 0){
         System.out.println("Usage: java A3 location_of_file.csv <q value>");
@@ -84,7 +128,12 @@ public class A3{
         boolean[] adopt_matrix = new boolean[size];
         //populate the adj matrix
         parseFileIntoAdjMatrix(csvOfGraph, adj_matrix, size);
-        printMatrix(adj_matrix);
+        //printMatrix(adj_matrix);
+        makeRandomFirstAdopters(2,adopt_matrix);
+        printStatus(adopt_matrix);
+
+        determineAdoptionStatus(adj_matrix, adopt_matrix, qValue,4);
+
       }catch(FileNotFoundException e){
         System.out.println("File not found error.");
       }
