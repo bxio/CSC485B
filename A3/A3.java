@@ -75,6 +75,30 @@ public class A3{
       //TODO: Find minimal case.
     }
 
+  public static ArrayList<ArrayList<Integer>> combine(int n, int k) {
+    ArrayList<ArrayList<Integer>> sol = new ArrayList<ArrayList<Integer>>();
+    System.out.println("Generating pattern for "+n+ " choose "+k);
+    recursiveCombine(n,k,new ArrayList<Integer>(), sol);
+    return sol;
+  }
+
+  private static void recursiveCombine(int n, int k, ArrayList<Integer> partial,
+    ArrayList<ArrayList<Integer>> sol) {
+    if(partial.size() == k && !sol.contains(partial)) {
+      Collections.sort(partial);
+      sol.add(partial);
+    } else if(partial.size() > k) {
+      return;
+    } else {
+      for(int i = n; i >= 1; --i) {
+        ArrayList<Integer> partial_sol = new ArrayList<Integer>();
+        partial_sol.addAll(partial);
+        partial_sol.add(i);
+        recursiveCombine(i-1, k, partial_sol, sol);
+      }
+    }
+  }
+
   public static void printStatus(boolean[] adopt_matrix){
     System.out.print("[");
     for(int i=0;i<adopt_matrix.length;i++){
@@ -84,28 +108,42 @@ public class A3{
     System.out.println("]");
   }
 
-  public static boolean determineAndAdopt(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
-    //initially determine previous converted count
-    boolean[] nextAdoptMatrix = new boolean[adopt_matrix.length];
-    System.arraycopy(adopt_matrix, 0, nextAdoptMatrix, 0, adopt_matrix.length);
+  public static boolean determineAndAdopt(float[][] adj_matrix, boolean[] adopt_matrix, float qValue, int numAdopters){
+    //make the combinations
+    ArrayList<ArrayList<Integer>> listOfCombinations = combine(adj_matrix.length,numAdopters);
 
-    int previousConvertedCount = 0;
-    for(int i=0;i<adopt_matrix.length;i++){
-      if(adopt_matrix[i]){
-        previousConvertedCount++;
+    for(int r= 0;r<listOfCombinations.size();r++){
+      for(int t = 0;t<listOfCombinations.get(r).size();t++){
+        //set the first adopters
+        System.out.println(">Setting node "+listOfCombinations.get(r).get(t));
+        adopt_matrix[listOfCombinations.get(r).get(t)-1] = true;
+      }
+
+      //initially determine previous converted count
+      int previousConvertedCount = 0;
+      for(int i=0;i<adopt_matrix.length;i++){
+        if(adopt_matrix[i]){
+          previousConvertedCount++;
+        }
+      }
+
+      //start loop
+      adoptNeighbours(adj_matrix, adopt_matrix, qValue);
+
+      if(getTotalConverts(adopt_matrix) == adopt_matrix.length){
+        //we got one!
+        System.out.print("Cascade found! Initial adoptors:");
+        for(int t = 0;t<listOfCombinations.get(r).size();t++){
+          System.out.print(" "+listOfCombinations.get(r).get(t));
+        }
+        System.out.println();
+        return true;
+      }else{
+        //reset for next round
+        Arrays.fill(adopt_matrix,false);
       }
     }
-
-    //start loop
-    adoptNeighbours(adj_matrix, adopt_matrix, qValue);
-
-    if(getTotalConverts(adopt_matrix) == adopt_matrix.length){
-      return true;
-    }else{
-      //keep testing with a different set of initial vectors
-      return false;
-    }
-    // return false;
+    return false;
   }
 
   public static void adoptNeighbours(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
@@ -219,11 +257,10 @@ public class A3{
         boolean[] adopt_matrix = new boolean[size];
         //populate the adj matrix
         parseFileIntoAdjMatrix(csvOfGraph, adj_matrix, size);
-        numAdopters = 4;//HARDCODE
-        makeRandomFirstAdopters(numAdopters, adopt_matrix);
+        //makeRandomFirstAdopters(numAdopters, adopt_matrix);
         //printStatus(adopt_matrix);
 
-        if(determineAndAdopt(adj_matrix, adopt_matrix, qValue)){
+        if(determineAndAdopt(adj_matrix, adopt_matrix, qValue, numAdopters)){
           System.out.println("Complete cascade with "+numAdopters+ " initial adoptors found.");
         }else{
           System.out.println("Complete cascade with "+numAdopters+ " initial adoptors is not possible.");
