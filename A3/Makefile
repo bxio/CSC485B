@@ -9,5 +9,8 @@ run: build
 test: clean build
 	java A3 test.csv 2 0.6
 
+t: clean build
+	java test
+
 clean:
 	rm -rf *.class
