@@ -81,6 +81,52 @@ public class A3{
     System.out.println("]");
   }
 
+  public static void determineAndAdopt(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
+    //initially determine previous converted count
+    boolean[] nextAdoptMatrix = new boolean[adopt_matrix.length];
+    System.arraycopy(adopt_matrix, 0, nextAdoptMatrix, 0, adopt_matrix.length);
+
+    int previousConvertedCount = 0;
+    for(int i=0;i<adopt_matrix.length;i++){
+      if(adopt_matrix[i]){
+        previousConvertedCount++;
+      }
+    }
+    //printStatus(nextAdoptMatrix);
+
+    boolean[] eligableStatus = new boolean[adopt_matrix.length];
+    Arrays.fill(eligableStatus, false);
+
+    //start loop
+    for(int i=0;i<adj_matrix.length;i++){
+      for(int j=0;j<adj_matrix[i].length;j++){
+        //traverse the array
+        if(adj_matrix[i][j] == 1 && adopt_matrix[i] && !adopt_matrix[j] && !eligableStatus[j]){
+          //I'm converted, my neighbour is not, and isn't already on the list to check
+          System.out.println("Node "+j+" potentially eligable.");
+          eligableStatus[j] = true;
+        }
+      }
+    }
+    System.out.print("Eligables: ");
+    printStatus(eligableStatus);
+    //convert the ones that are potentially eligable
+    for(int k=0;k<eligableStatus.length;k++){
+      if(eligableStatus[k] && determineAdoptionStatus(adj_matrix,adopt_matrix,qValue,k)){
+        System.out.println("Adopted Node "+k);
+        adopt_matrix[k] = true;
+      }
+    }
+
+    //reset.
+    Arrays.fill(eligableStatus, false);
+    //end loop
+  }
+
+  public static void adoptNeighbours(){
+
+  }
+
   public static boolean determineAdoptionStatus(float[][] adj_matrix, boolean[] adopt_matrix, float qValue, int poi){
     float pValue;
     int numConnectedAdopters = 0;
@@ -132,7 +178,7 @@ public class A3{
         makeRandomFirstAdopters(2,adopt_matrix);
         printStatus(adopt_matrix);
 
-        determineAdoptionStatus(adj_matrix, adopt_matrix, qValue,4);
+        determineAndAdopt(adj_matrix, adopt_matrix, qValue);
 
       }catch(FileNotFoundException e){
         System.out.println("File not found error.");
