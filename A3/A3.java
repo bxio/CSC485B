@@ -51,9 +51,23 @@ public class A3{
     }
   }
 
-public static void main(String [] args){
-  if(args.length == 0){
-      System.out.println("Usage: java A3 location_of_file.csv <q value>");
+  /**
+   * Prints out the given 2d matrix (float onlys)
+   *
+   * @param  adj_matrix  the adjacency matrix to be populated
+   */
+  public static void printMatrix(float[][] adj_matrix){
+    for(int i=0;i<adj_matrix.length;i++){
+      for(int j=0;j<adj_matrix[i].length;j++){
+        System.out.print(" "+adj_matrix[i][j]);
+      }
+      System.out.println("");
+    }
+  }
+
+  public static void main(String [] args){
+    if(args.length == 0){
+        System.out.println("Usage: java A3 location_of_file.csv <q value>");
     }else{
       String csvOfGraph = args[0];
       int numAdopters = Integer.parseInt(args[1]);
@@ -70,15 +84,7 @@ public static void main(String [] args){
         boolean[] adopt_matrix = new boolean[size];
         //populate the adj matrix
         parseFileIntoAdjMatrix(csvOfGraph, adj_matrix, size);
-
-
-        for(int i=0;i<adj_matrix.length;i++){
-          for(int j=0;j<adj_matrix[i].length;j++){
-            System.out.print(" "+adj_matrix[i][j]);
-          }
-          System.out.println("");
-        }
-
+        printMatrix(adj_matrix);
       }catch(FileNotFoundException e){
         System.out.println("File not found error.");
       }
