@@ -94,39 +94,58 @@ public class A3{
     }
     //printStatus(nextAdoptMatrix);
 
-    boolean[] eligableStatus = new boolean[adopt_matrix.length];
-    Arrays.fill(eligableStatus, false);
-
     //start loop
+    adoptNeighbours(adj_matrix, adopt_matrix, qValue);
+
+  }
+
+  public static void adoptNeighbours(float[][] adj_matrix, boolean[] adopt_matrix, float qValue){
+    boolean[] eligibleStatus = new boolean[adopt_matrix.length];
+    Arrays.fill(eligibleStatus, false);
+
+    System.out.print("Start: ");
+    printStatus(adopt_matrix);
+
     for(int i=0;i<adj_matrix.length;i++){
       for(int j=0;j<adj_matrix[i].length;j++){
         //traverse the array
-        if(adj_matrix[i][j] == 1 && adopt_matrix[i] && !adopt_matrix[j] && !eligableStatus[j]){
+        if(adj_matrix[i][j] == 1 && adopt_matrix[i] && !adopt_matrix[j] && !eligibleStatus[j]){
           //I'm converted, my neighbour is not, and isn't already on the list to check
-          System.out.println("Node "+j+" potentially eligable.");
-          eligableStatus[j] = true;
+          System.out.println("Node "+j+" potentially eligible.");
+          eligibleStatus[j] = true;
         }
       }
+      System.out.print("Eligibles: ");
+      printStatus(eligibleStatus);
+      if(getEligibleCount(eligibleStatus) == 0){
+        break;
+      }
+
+      //convert the ones that are potentially eligible
+      for(int k=0;k<eligibleStatus.length;k++){
+        if(eligibleStatus[k] && determineAdoptionStatus(adj_matrix,adopt_matrix,qValue,k)){
+          System.out.println("Adopted Node "+k);
+          adopt_matrix[k] = true;
+        }
+      }
+      Arrays.fill(eligibleStatus, false);
     }
-    System.out.print("Eligables: ");
-    printStatus(eligableStatus);
-    //convert the ones that are potentially eligable
-    for(int k=0;k<eligableStatus.length;k++){
-      if(eligableStatus[k] && determineAdoptionStatus(adj_matrix,adopt_matrix,qValue,k)){
-        System.out.println("Adopted Node "+k);
-        adopt_matrix[k] = true;
+
+
+    System.out.print("Finish: ");
+    printStatus(adopt_matrix);
+  }
+
+
+  public static int getEligibleCount(boolean[] adopt_matrix){
+    int count = 0;
+    for(int i=0;i<adopt_matrix.length;i++){
+      if(adopt_matrix[i]){
+        count++;
       }
     }
-
-    //reset.
-    Arrays.fill(eligableStatus, false);
-    //end loop
+    return count;
   }
-
-  public static void adoptNeighbours(){
-
-  }
-
   public static boolean determineAdoptionStatus(float[][] adj_matrix, boolean[] adopt_matrix, float qValue, int poi){
     float pValue;
     int numConnectedAdopters = 0;
